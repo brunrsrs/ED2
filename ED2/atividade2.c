@@ -58,7 +58,7 @@ int RA, num;
         return FALSE;
 
     while (!feof(arqIndice) && num != RA) {
-        fscanf(arqIndice, "%d %d\n", &num, &(*desloc) );
+        fscanf(arqIndice, "%d %d\n", &num, desloc);
     }
 
     if (num != RA)

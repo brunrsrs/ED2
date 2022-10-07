@@ -64,19 +64,18 @@ do {
         
         fseek(arqDados, desloc, SEEK_SET);
         fscanf(arqDados, "%d", &aux);
+        A.nome = malloc((aux+1) * sizeof(char));
         fgets(A.nome, aux+1, arqDados);
-        desloc += (aux+3); //recebe o tamanho do proximo endereço
         
-        fseek(arqDados, desloc, SEEK_SET); //se move pro proximo endereço
+        fseek(arqDados, 1, SEEK_CUR); //se move pro proximo endereço
         fscanf(arqDados, "%d", &aux);
+        A.curso = malloc((aux+1) * sizeof(char));
         fgets(A.curso, aux+1, arqDados);
-        desloc += (aux + 3); //recebe o tamanho do proximo endereço
 
-
-        fseek(arqDados, desloc, SEEK_SET); //se move pro proximo endereço
+        fseek(arqDados, 1, SEEK_CUR); //se move pro proximo endereço
         fscanf(arqDados, "%d", &A.nro_UNESP);
 
-        printf("\nAluno: %s\nCurso: %s\nRA: %d\n\n", A.nome, A.curso, A.nro_UNESP);
+        printf("\nAluno: %s\nCurso: %s\nRA: %d\n\n", A.nome, A.curso, A.nro_UNESP); //Mostra na tela o resultado
         break;
 
         //Encerra o programa
