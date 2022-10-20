@@ -1,19 +1,29 @@
 #define bool int
 #define true 1
 #define false 0
+#define MAX 256
 
-    //Arvore que conterá os dados
-typedef struct arvore {
+typedef struct{
+    unsigned char letra;
+    int peso;    
+}no;
 
-char letra;
-int peso;
-struct arvore *dir;
-struct arvore *esq;
-} tree;
+    //Arvore que conterá os nós
+typedef struct  {
+    no raiz;
+    struct arvore *dir;
+    struct arvore *esq;
+    struct arvore *prox;
+}arvore;
 
     //Lista que conterá as árvores
-typedef struct lista {
+typedef struct{
+    arvore *raiz;
+    int tam;
+}lista;
 
-tree arv;
-struct lista *prox;
-}list;
+//funções
+void inicializa_tab(unsigned int t[]);
+void cria_lista(lista *L);
+void cria_no(lista *L, unsigned int vet[]);
+void insere_ordenado();
