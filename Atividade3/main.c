@@ -12,24 +12,33 @@ int main()  {
     unsigned int tab[MAX]; //tabela de frequencia
     inicializa_tab(tab);
 
-    lista *List;
+    lista *L;
+    no *N;
 
     FILE *leitor;
     FILE *compac;
 
     leitor = fopen("teste.txt", "r");
-
     char aux;
     while (!feof(leitor)) {
          fscanf(leitor, "%c", &aux);
          tab[aux]++;
     }
+    fclose (leitor);
 
-    cria_lista(List);
+    cria_lista(L);
+    cria_no(L, tab);
 
-    cria_no(List, tab);
+    no *aux2;
+    aux2 = L->raiz;
 
+/*    
+    //teste
+    while (aux2->prox) {
+        printf("%d, %c\n", aux2->valor.peso, aux2->valor.letra);
+        aux2 = aux2->prox;
+    }
+*/  
 
-    fclose(leitor);
 return 0;
 }

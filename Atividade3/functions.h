@@ -3,22 +3,22 @@
 #define false 0
 #define MAX 256
 
-typedef struct{
+typedef struct Dados{
     unsigned char letra;
-    int peso;    
+    int peso;
+}dados;
+
+    //nó e seus dados
+typedef struct No{
+    struct Dados valor;
+    struct No *dir;
+    struct No *esq;
+    struct No *prox;
 }no;
 
-    //Arvore que conterá os nós
-typedef struct  {
-    no raiz;
-    struct arvore *dir;
-    struct arvore *esq;
-    struct arvore *prox;
-}arvore;
-
     //Lista que conterá as árvores
-typedef struct{
-    arvore *raiz;
+typedef struct Lista{
+    struct No *raiz;
     int tam;
 }lista;
 
@@ -26,4 +26,4 @@ typedef struct{
 void inicializa_tab(unsigned int t[]);
 void cria_lista(lista *L);
 void cria_no(lista *L, unsigned int vet[]);
-void insere_ordenado();
+void insere_ordenado(lista *L, no *N);
