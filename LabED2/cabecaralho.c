@@ -1,7 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 
 typedef struct{
+    long loc; //localizacao dele
     int chave;
     char tarefa[60];
     int dia, mes, ano;
@@ -9,7 +11,9 @@ typedef struct{
 
 int cadastrar_todo(ToDo **t, int quant, int tam){
     if(quant < tam){
+        srand(time(NULL)); //muda a seed de aleatoridade
         ToDo *novo = malloc(sizeof(ToDo));
+        novo->chave = rand()%100; //gera uma chave aleatoria
         printf("\nDigite a Tarefa: ");
         scanf("%50[^\n]", novo->tarefa);
         printf("\nDigite a data prevista dd mm aaaa: ");
@@ -24,16 +28,38 @@ int cadastrar_todo(ToDo **t, int quant, int tam){
     }
 }
 
-void imprimir(ToDo **t, int quant){
-    int i;
-    printf("\n\t------ Lista de Tarefas ------\n");
-    for(i = 0; i < quant; i++){
-        printf("\t%d = %2d/%2d/%4d\t%s\n", i+1,
-        t[i]->dia, t[i]->mes, t[i]->ano, t[i]->tarefa);
-    }
-    printf("\t--------------------------------\n");
+void imprimir(ToDo **t, int quant) {
+    int i, chave, flag = 0;
+    
+    for (i=0; i<quant; i++)
+        printf("%d - %s\n", t[i]->chave, t[i]->tarefa);
+
+    printf("\nDigite a chave que deseja mostrar mais informacoes: ");
+    scanf(" %d", &chave);
+
+    for (i=0; i<quant && chave!=t[i]->chave; i++)
+        if (chave == t[i]->chave)
+            flag = 1;
+
+    if (flag == 1) {
+        FILE *arq;
+        ToDo *novo = malloc(sizeof(ToDo));
+        arq = fopen("ToDo.txt", "r");
+        fseek(arq, t[i]->loc, 0);
+
+        fscanf(arq, "%d ", &novo->chave);
+        fscanf(arq, "%50[^\n]\n", novo->tarefa);
+        fscanf(arq, "%d %d %d", &novo->dia, &novo->mes, &novo->ano);
+
+        printf("\n\t------ Tarefa encontrada ------\n");
+        printf("chave: %d\ntarefa: %s\ndata: %d/%d/%d\n", novo->chave, novo->tarefa, novo->dia, novo->mes, novo->ano);
+        }
+    
+    else
+        printf("\n\t------ Chave nao encontrada -------");
 }
 
+/*
 void alterar_todo(ToDo **t, int quant){
     int id;
     imprimir(t, quant);
@@ -50,6 +76,7 @@ void alterar_todo(ToDo **t, int quant){
     else
         printf("\n\tCodigo invalido!\n");
 }
+*/
 
 void salvar(ToDo **t, int quant, char arq[]){
     FILE *file = fopen(arq, "w");
@@ -61,10 +88,11 @@ void salvar(ToDo **t, int quant, char arq[]){
     else if (!index)
         printf("\n\tERRO AO ABRIR/CRIAR O ARQUIVO DE INDICE!\n");
     else {
-            fprintf(file, "%d\n", quant);
+            fprintf(file, "%d\n", quant); //printa a quantidade nos 2 arquivos
             fprintf(index, "%d\n", quant);
+            
         for(i = 0; i < quant; i++){
-            aux = ftell(file);
+            aux = ftell(file); //marca a posição inicial da tarefa no arquivo
             //printando no arquivo de datas
             fprintf(file, "%d ", t[i]->chave);
             fputs(t[i]->tarefa, file);
@@ -72,7 +100,7 @@ void salvar(ToDo **t, int quant, char arq[]){
             fprintf(file, "%d %d %d\n", t[i]->dia, t[i]->mes, t[i]->ano);
 
             //printando no arquivo de indice
-            fprintf(index, "%ld %d ", aux, t[i]->chave); //printa a localização 
+            fprintf(index, "%ld %d ", aux, t[i]->chave); //printa a localização e a chave
             fputs(t[i]->tarefa, file);
             fputc('\n', index);
         }
