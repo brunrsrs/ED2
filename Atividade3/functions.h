@@ -22,8 +22,16 @@ typedef struct Lista{
     int tam;
 }lista;
 
-//funções
+//funções -------
 void inicializa_tab(unsigned int t[]);
+
+//funções da lista
 void cria_lista(lista *L);
-void cria_no(lista *L, unsigned int vet[]);
+void preenche_lista(lista *L, unsigned int vet[]);
 void insere_ordenado(lista *L, no *N);
+void imprimir_lista(lista *L);
+
+//funções da arvore
+no *remove_elem (lista *L);
+no *montar_arvore(lista *L);
+void imprimir_arvore(no *raiz, int tam);

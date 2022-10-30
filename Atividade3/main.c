@@ -13,7 +13,7 @@ int main()  {
     inicializa_tab(tab);
 
     lista *L;
-    no *N;
+    no *N, *arvore;
 
     FILE *leitor;
     FILE *compac;
@@ -27,18 +27,11 @@ int main()  {
     fclose (leitor);
 
     cria_lista(L);
-    cria_no(L, tab);
+    preenche_lista(L, tab);
+//    imprimir_lista(L);
 
-    no *aux2;
-    aux2 = L->raiz;
-
-/*    
-    //teste
-    while (aux2->prox) {
-        printf("%d, %c\n", aux2->valor.peso, aux2->valor.letra);
-        aux2 = aux2->prox;
-    }
-*/  
+    arvore = montar_arvore(L);
+//    imprimir_arvore(arvore, 0);
 
 return 0;
 }
