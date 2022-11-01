@@ -31,3 +31,4 @@ void imprimir_lista(lista *L);
 no *remove_elem (lista *L);
 no *montar_arvore(lista *L);
 void imprimir_arvore(no *raiz, int tam);
+char** memoria_dicionario(int colunas);

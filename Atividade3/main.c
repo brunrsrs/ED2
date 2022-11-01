@@ -8,17 +8,18 @@
 #define MAX 256
 
 int main()  {
+    char **dicionario; //onde será armazenado cada valor de char
 
     unsigned int tab[MAX]; //tabela de frequencia
     inicializa_tab(tab);
 
-    lista *L;
+    lista *L = malloc(sizeof(lista));
     no *N, *arvore;
 
     FILE *leitor;
     FILE *compac;
 
-    leitor = fopen("teste2.txt", "r");
+    leitor = fopen("teste.txt", "r");
     char aux;
     while (!feof(leitor)) {
          aux = fgetc(leitor);
@@ -28,10 +29,9 @@ int main()  {
 
     cria_lista(L);
     preenche_lista(L, tab);
-//    imprimir_lista(L);
 
     arvore = montar_arvore(L);
-//    imprimir_arvore(arvore, 0);
+    imprimir_arvore(arvore, 0);
 
 return 0;
 }

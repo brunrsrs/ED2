@@ -36,8 +36,6 @@ void preenche_lista(lista *L, unsigned int t[]) {
                 novo->letra = i;
                 novo->peso = t[i];
 
-                printf("%d %c\n", novo->peso, novo->letra);
-
                 insere_ordenado(L, novo); //insere ordenadamente na lista
             }
             else {
@@ -136,3 +134,17 @@ void imprimir_arvore(no *raiz, int tam){ //mostra as folhas da arvore em ordem
 }
 
 //funções para salvar as variaveis (dicionario) ---------
+//aloca memoria do dicionario
+char** memoria_dicionario(int colunas){
+    char **dicionario;
+
+    dicionario = malloc(sizeof(char*) * tam);
+
+    for(int i = 0; i < tam; i++) {
+        dicionario[i] = malloc(colunas*sizeof(char));
+        for (int j=0; j<colunas; j++) //inicializa colunas com 0                                         
+            dicionario[i][j] = 0;
+    }
+
+    return dicionario;
+}
