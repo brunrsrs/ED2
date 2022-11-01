@@ -20,9 +20,10 @@ void cria_lista(lista *L) {
     L->raiz = NULL;
 }
 
+
 //cria o nó com as informações
 void preenche_lista(lista *L, unsigned int t[]) {
-    no *novo;
+    no *novo = NULL;
 
     for (int i=0; i<MAX; i++) {
         if (t[i] > 0) { //se o char aparecer no texto
@@ -32,8 +33,10 @@ void preenche_lista(lista *L, unsigned int t[]) {
                 novo->dir = NULL;
                 novo->prox = NULL;
                 novo->esq = NULL;
-                novo->valor.letra = i;
-                novo->valor.peso = t[i];
+                novo->letra = i;
+                novo->peso = t[i];
+
+                printf("%d %c\n", novo->peso, novo->letra);
 
                 insere_ordenado(L, novo); //insere ordenadamente na lista
             }
@@ -56,7 +59,7 @@ void insere_ordenado(lista *L, no *N) {
     }
 
     //inserir no inicio
-    else if (N->valor.peso < L->raiz->valor.peso) {
+    else if (N->peso < L->raiz->peso) {
         N->prox = L->raiz;
         L->raiz = N;
         L->tam++;
@@ -65,7 +68,7 @@ void insere_ordenado(lista *L, no *N) {
     //inserir no meio/fim
     else {
         aux = L->raiz;
-        while (aux->prox!=NULL && aux->prox->valor.peso <= N->valor.peso)
+        while (aux->prox!=NULL && aux->prox->peso <= N->peso)
             aux = aux->prox;
 
         N->prox = aux->prox;
@@ -81,7 +84,7 @@ void imprimir_lista(lista *L) {
     printf("\tLista ordenada: Tamanho: %d\n", L->tam);
 
     while(aux) {
-        printf("\tCaracter: %c Frequencia: %d\n", aux->valor.letra, aux->valor.peso);
+        printf("\tCaracter: %c Frequencia: %d\n", aux->letra, aux->peso);
         aux = aux->prox;
     }
 }
@@ -101,15 +104,16 @@ no* remove_elem (lista *L) {
     return aux;
 }
 
+//organiza a arvore e as folhas
 no *montar_arvore(lista *L) {
     no *primeiro, *segundo, *novo;
     
-    while(L->tam > 1){
+    while(L->tam > 1){ //sobrar apenas 1 elemento
         primeiro = remove_elem(L); //retorna o 1° elemento
         segundo = remove_elem(L); //retorna o 2° elemento
         novo = malloc(sizeof(no));
-        novo->valor.letra = '+';
-        novo->valor.peso = primeiro->valor.peso + segundo->valor.peso;
+        novo->letra = '+';
+        novo->peso = primeiro->peso + segundo->peso;
         novo->esq = primeiro; //primeiro é menor que o segundo pois está em ordem
         novo->dir = segundo;
         novo->prox = NULL;
@@ -119,13 +123,16 @@ no *montar_arvore(lista *L) {
     return L->raiz;
 }
 
+//função pra testar a arvore
 void imprimir_arvore(no *raiz, int tam){ //mostra as folhas da arvore em ordem
 
     if(raiz->esq == NULL && raiz->dir == NULL)
-        printf("\tFolha: %c\tAltura: %d\tPeso: %d\n", raiz->valor.letra, tam, raiz->valor.peso);
+        printf("\tFolha: %c\tAltura: %d\tPeso: %d\n", raiz->letra, tam, raiz->peso);
 
     else{
         imprimir_arvore(raiz->esq, tam+1);
         imprimir_arvore(raiz->dir, tam+1);
     }
 }
+
+//funções para salvar as variaveis (dicionario) ---------

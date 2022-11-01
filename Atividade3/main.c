@@ -18,10 +18,10 @@ int main()  {
     FILE *leitor;
     FILE *compac;
 
-    leitor = fopen("teste.txt", "r");
+    leitor = fopen("teste2.txt", "r");
     char aux;
     while (!feof(leitor)) {
-         fscanf(leitor, "%c", &aux);
+         aux = fgetc(leitor);
          tab[aux]++;
     }
     fclose (leitor);

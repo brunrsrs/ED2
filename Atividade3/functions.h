@@ -3,14 +3,10 @@
 #define false 0
 #define MAX 256
 
-typedef struct Dados{
-    unsigned char letra;
-    int peso;
-}dados;
-
     //nó e seus dados
 typedef struct No{
-    struct Dados valor;
+    char letra;
+    int peso;
     struct No *dir;
     struct No *esq;
     struct No *prox;
