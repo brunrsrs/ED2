@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include "functions.h"
 
 #define bool int
@@ -14,12 +15,14 @@ void inicializa_tab(unsigned int t[]) {
     }
 }
 
+
+//funções para montar a lista ---------
+
 //inicializa a lista
 void cria_lista(lista *L) {
     L->tam = 0;
     L->raiz = NULL;
 }
-
 
 //cria o nó com as informações
 void preenche_lista(lista *L, unsigned int t[]) {
@@ -39,7 +42,7 @@ void preenche_lista(lista *L, unsigned int t[]) {
                 insere_ordenado(L, novo); //insere ordenadamente na lista
             }
             else {
-                printf("Não foi possivel alocar memoria");
+                printf("Não foi possivel alocar memória");
                 break;
             }
         }
@@ -75,7 +78,6 @@ void insere_ordenado(lista *L, no *N) {
     }
 }
 
-
 //função pra testar a ordem da lista
 void imprimir_lista(lista *L) {
     no *aux = L->raiz;
@@ -87,8 +89,7 @@ void imprimir_lista(lista *L) {
     }
 }
 
-
-//operação para montar arvore --------------
+//retorna o elemento da lista
 no* remove_elem (lista *L) {
     no *aux;
     aux = NULL;
@@ -101,6 +102,8 @@ no* remove_elem (lista *L) {
     }
     return aux;
 }
+
+//operação para montar arvore --------------
 
 //organiza a arvore e as folhas
 no *montar_arvore(lista *L) {
@@ -134,17 +137,92 @@ void imprimir_arvore(no *raiz, int tam){ //mostra as folhas da arvore em ordem
 }
 
 //funções para salvar as variaveis (dicionario) ---------
+
+//Mostra tamanho da arvore de huffman
+int altura_arvore(no *raiz){
+    int esq, dir;
+
+    if(!raiz)
+        return -1;
+
+    else {
+        esq = altura_arvore(raiz->esq) + 1;
+        dir = altura_arvore(raiz->dir) + 1;
+
+        if(esq > dir)
+            return esq;
+        else
+            return dir;
+    }
+}
+
 //aloca memoria do dicionario
 char** memoria_dicionario(int colunas){
     char **dicionario;
 
-    dicionario = malloc(sizeof(char*) * tam);
+    dicionario = malloc(sizeof(char*) * 256); //cria 256 linhas
 
-    for(int i = 0; i < tam; i++) {
+    for(int i = 0; i < 256; i++) { //para todas as linhas, cria as colunas
         dicionario[i] = malloc(colunas*sizeof(char));
         for (int j=0; j<colunas; j++) //inicializa colunas com 0                                         
             dicionario[i][j] = 0;
     }
 
     return dicionario;
+}
+
+//função que gera os valores do dicionario
+void gerar_dicionario(char **dicionario, no *raiz, char *caminho, int colunas) {
+    char esquerda[colunas], direita[colunas];
+
+
+    if(raiz->esq == NULL && raiz->dir == NULL)
+        strcpy(dicionario[raiz->letra], caminho); //insere o caminho no vetor
+
+
+    else {
+        strcpy(esquerda, caminho);
+        strcpy(direita, caminho);
+
+        strcat(esquerda, "0"); //concatena os valores aos vetores
+        strcat(direita, "1");
+
+        gerar_dicionario(dicionario, raiz->esq, esquerda, colunas);
+        gerar_dicionario(dicionario, raiz->dir, direita, colunas);
+    }
+}
+
+//função de teste para mostrar o dicionario
+void imprime_dicionario(char **dicionario){
+
+    printf("\n\tDicionario:\n");
+    for(int i = 0; i < 256; i++){
+        if(strlen(dicionario[i]) > 0) //caso nao esteja vazio o vetor
+            printf("\t%c: %s\n", i, dicionario[i]);
+    }
+}
+
+//funções para trabalhar com o texto codificado ---------
+
+//retorna o tamanho do texto codificado
+int calcula_tamanho_string(char **dicionario, unsigned char *tex){
+    int i = 0, tam = 0;
+    while(tex[i] != '\0'){
+        tam += strlen(dicionario[tex[i]]);
+        i++;
+    }
+    return tam + 1;
+}
+
+//faz a codificação
+char* codificar(char **dicionario, unsigned char *texto){
+
+    int i = 0, tam = calcula_tamanho_string(dicionario, texto);
+    char *codigo = calloc(tam, sizeof(char));
+
+    while(texto[i] != '\0'){
+        strcat(codigo, dicionario[texto[i]]);
+        i++;
+    }
+    return codigo;
 }
