@@ -205,10 +205,10 @@ void imprime_dicionario(char **dicionario){
 //funções para trabalhar com o texto codificado ---------
 
 //retorna o tamanho do texto codificado
-int calcula_tamanho_string(char **dicionario, unsigned char *tex){
+int calcula_tamanho_string(char **dicionario, unsigned char *texto){
     int i = 0, tam = 0;
-    while(tex[i] != '\0'){
-        tam += strlen(dicionario[tex[i]]);
+    while(texto[i] != '\0'){
+        tam += strlen(dicionario[texto[i]]);
         i++;
     }
     return tam + 1;
@@ -217,12 +217,13 @@ int calcula_tamanho_string(char **dicionario, unsigned char *tex){
 //faz a codificação
 char* codificar(char **dicionario, unsigned char *texto){
 
-    int i = 0, tam = calcula_tamanho_string(dicionario, texto);
-    char *codigo = calloc(tam, sizeof(char));
+    int i = 0;
+    int tam = calcula_tamanho_string(dicionario, texto);
+    char *codificado = calloc(tam, sizeof(char));
 
     while(texto[i] != '\0'){
-        strcat(codigo, dicionario[texto[i]]);
+        strcat(codificado, dicionario[texto[i]]);
         i++;
     }
-    return codigo;
+    return codificado;
 }

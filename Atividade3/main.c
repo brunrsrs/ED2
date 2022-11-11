@@ -13,6 +13,7 @@ int main()  {
     int colunas = 1; //(pois deverá ter tamanho + 1)
     int qtd_bin = 0; //conta quantos digitos binarios terão
 
+    char *texto; //armazenará o arquivo de texto;
     char **dicionario; //onde será armazenado cada valor de char
     char *codificado; //texto codificado será armazenado
 
@@ -26,6 +27,10 @@ int main()  {
     FILE *compac;
 
     leitor = fopen("teste.txt", "r");
+    if (!leitor) {
+        printf("Não foi possivel abrir");
+        return 0;
+    }
 
     //printf("O programa irá gerar um arquivo com texto codificado:\n");
 
@@ -36,6 +41,18 @@ int main()  {
          qtd_chars++;
     }
 
+    texto = malloc((qtd_chars+1)*sizeof(char)); //aloca memoria pro texto
+
+    int count=0;
+    fseek(leitor, 0, SEEK_SET);
+    while (!feof(leitor)) { //passa o texto para uma string
+        aux = fgetc(leitor);
+        texto[count] = aux;
+        count++;
+    }
+    texto[qtd_chars+1] = '\0'; //coloca o operador para encerrar
+    fclose(leitor);
+
     cria_lista(L);
     preenche_lista(L, tab);
 
@@ -44,8 +61,18 @@ int main()  {
     dicionario = memoria_dicionario(colunas); //aloca memoria para o dicionario
     gerar_dicionario(dicionario, arvore, "", colunas); //gera o dicionario baseado na arvore
 
+    //variavel qtd_chars nao precisará mais acumular valores do texto inicial
+    qtd_chars = calcula_tamanho_string(dicionario, texto);
+    codificado = calloc(qtd_chars, sizeof(char));
+    codificado = codificar(dicionario, texto);
 
-    fclose(leitor);
+    FILE *saida;
+    saida = fopen("saida.txt", "w");
+    for (int i=0; i<qtd_chars; i++) {
+        fputc(codificado[i], saida);
+    }
+    fclose(saida);
+
 
 return 0;
 }
