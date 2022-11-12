@@ -1,6 +1,3 @@
-#define bool int
-#define true 1
-#define false 0
 #define MAX 256
 
     //nó e seus dados
@@ -18,7 +15,9 @@ typedef struct Lista{
     int tam;
 }lista;
 
-//funções -------
+//funções gerais-------
+void selecao();
+void mostra_texto(char *t, int size);
 void inicializa_tab(unsigned int t[]);
 
 //funções da lista
@@ -41,3 +40,7 @@ void imprime_dicionario(char **dicionario);
 //funções pra codificação
 int calcula_tamanho_string(char **dicionario, unsigned char *tex);
 char* codificar(char **dicionario, unsigned char *texto);
+int tam_string_bin(char *texto);
+
+//funções de conversão
+char convert_byte (char *vet , int n);

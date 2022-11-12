@@ -1,18 +1,31 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <math.h>
 #include "functions.h"
 
-#define bool int
-#define true 1
-#define false 0
 #define MAX 256
+
+//funções gerais ------------------
+
+//exibe o que o usuario pode fazer
+void selecao() {
+    printf("\nO que deseja fazer?:");
+    printf("\n\t[1] - compactar arquivo\n\t[2] - descompactar arquivo\n\t[3] - sair\ncomando: ");
+}
 
 //inicializa o vetor de elementos
 void inicializa_tab(unsigned int t[]) {
     for (int i=0; i<MAX; i++) {
         t[i] = 0;
     }
+}
+
+void mostra_texto(char *t, int size) {
+    for (int i=0; i<size-1; i++)
+        printf("%c", t[i]);
+
+    printf("\n");
 }
 
 
@@ -160,9 +173,9 @@ int altura_arvore(no *raiz){
 char** memoria_dicionario(int colunas){
     char **dicionario;
 
-    dicionario = malloc(sizeof(char*) * 256); //cria 256 linhas
+    dicionario = malloc(sizeof(char*) * MAX); //cria 256 linhas
 
-    for(int i = 0; i < 256; i++) { //para todas as linhas, cria as colunas
+    for(int i = 0; i < MAX; i++) { //para todas as linhas, cria as colunas
         dicionario[i] = malloc(colunas*sizeof(char));
         for (int j=0; j<colunas; j++) //inicializa colunas com 0                                         
             dicionario[i][j] = 0;
@@ -196,7 +209,7 @@ void gerar_dicionario(char **dicionario, no *raiz, char *caminho, int colunas) {
 void imprime_dicionario(char **dicionario){
 
     printf("\n\tDicionario:\n");
-    for(int i = 0; i < 256; i++){
+    for(int i = 0; i < MAX; i++){
         if(strlen(dicionario[i]) > 0) //caso nao esteja vazio o vetor
             printf("\t%c: %s\n", i, dicionario[i]);
     }
@@ -211,7 +224,7 @@ int calcula_tamanho_string(char **dicionario, unsigned char *texto){
         tam += strlen(dicionario[texto[i]]);
         i++;
     }
-    return tam + 1;
+    return tam;
 }
 
 //faz a codificação
@@ -225,5 +238,45 @@ char* codificar(char **dicionario, unsigned char *texto){
         strcat(codificado, dicionario[texto[i]]);
         i++;
     }
+
     return codificado;
+}
+
+//calcula a qtd de numeros em binario
+int tam_string_bin(char *texto) {
+    int qtd=0;
+
+    while (texto[qtd]!='\0')
+        qtd++;
+
+    return qtd;
+}
+
+//funções de conversão -----------
+
+//compacta o texto binario
+char convert_byte (char *vet , int n) { 
+    char rtno = 0, i = 0; 
+    
+    while (i<n) {
+        rtno += pow(2.0, (double)i) * (vet[n-1-i] - 48);
+        i++; 
+    }
+
+    return rtno ; 
+} 
+
+//converte 
+void convert (char ch, char *Vet) {
+    int i=7; //indice auxiliar
+
+    while (i>=0) {
+        if (ch&1)
+            Vet[i]='1';
+        else
+            Vet[i]='0';
+
+        i--;
+        ch >>= 1;
+    }
 }
