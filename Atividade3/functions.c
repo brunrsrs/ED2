@@ -266,17 +266,56 @@ char convert_byte (char *vet , int n) {
     return rtno ; 
 } 
 
-//converte 
 void convert (char ch, char *Vet) {
-    int i=7; //indice auxiliar
+    int i = 7; //indice auxiliar
 
     while (i>=0) {
-        if (ch&1)
-            Vet[i]='1';
+        if (ch & 1)
+            Vet [i] = '1';
         else
-            Vet[i]='0';
+            Vet [i] = '0';
 
         i--;
         ch >>= 1;
     }
+}
+
+//função que decodifica o texto de binario para o normal
+char* decodificar(unsigned char texto[], no *raiz){
+    int i = 0;
+    no *aux = raiz;
+    char temp[2];
+    char *decodificado = calloc(strlen(texto), sizeof(char));
+
+    while(texto[i] != '\0'){
+        if(texto[i] == '0')
+            aux = aux->esq; 
+        else
+            aux = aux->dir;
+
+        //se for um nó folha concatena o caracter e volta para a raiz da árvore
+        if(aux->esq == NULL && aux->dir == NULL){
+            temp[0] = aux->letra;
+            temp[1] = '\0';
+            strcat(decodificado, temp);
+            aux = raiz;
+        }
+        i++;
+    }
+    
+    return decodificado;
+}
+
+//função para calcular tamanho ------------
+int calcula_bits(unsigned int tab[], char** dicionario) {
+    int tam_original = 0;
+    int tam_comprimido = 0;
+
+    for (int i=0; i<MAX; i++)
+        if (tab[i] != 0) {
+            tam_original += 8 * tab[i];
+            tam_comprimido += strlen(dicionario[i]);
+        }
+
+    return tam_original - tam_comprimido;
 }

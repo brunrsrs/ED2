@@ -40,7 +40,12 @@ void imprime_dicionario(char **dicionario);
 //funções pra codificação
 int calcula_tamanho_string(char **dicionario, unsigned char *tex);
 char* codificar(char **dicionario, unsigned char *texto);
+char* decodificar(unsigned char texto[], no *raiz);
 int tam_string_bin(char *texto);
 
 //funções de conversão
 char convert_byte (char *vet , int n);
+void convert (char ch, char *Vet);
+
+//funções de calcular o tamanho
+int calcula_bits(unsigned int tab[], char** dicionario);
