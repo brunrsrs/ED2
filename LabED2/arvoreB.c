@@ -18,7 +18,7 @@ No *criarNo(int item, No *filho);
 void InserirValor(int item, int pos, No *no,No *filho);
 void divideNo(int item, int *pval, int pos, No *no, No *filho, No **novoNo);
 void procura(No *noSelecionado);
-void procuraIten(int item, No *no, int *posi);
+void procuraIten(int item, No *no, int *posi, int *flag);
 
 //Se a arvore estiver vazia, alocar o Nó raiz e inserir a chave
 void inserir(int item) {
@@ -128,7 +128,7 @@ void procura(No *noSelecionado) {
     }
 }
 
-void procuraIten(int item, No *no, int *posi) {
+void procuraIten(int item, No *no, int *posi, int *flag) {
     if(!no)
         return;
 
@@ -137,16 +137,16 @@ void procuraIten(int item, No *no, int *posi) {
     else {
         for(*posi = no->count; item<no->item[*posi] && *posi>1; *posi--);
         if (item == no->item[*posi]) {
-            printf("\n\tValor encontrado!!\n");
+            *flag = 1;
             return;
         }
     }
-    procuraIten(item, no->link[*posi], posi);
+    procuraIten(item, no->link[*posi], posi, flag);
     return;
 }
 
 int main() {
-    int item, posi, cmd = 0;
+    int item, posi, cmd = 0, flag = 0;
 
     do {
         printf("\n\tDigite o que deseja fazer:\n");
@@ -165,7 +165,13 @@ int main() {
                 printf("Digite o valor: ");
                 scanf(" %d", &item);
 
-                procuraIten(item, raiz, &posi);
+                flag = 0;
+                procuraIten(item, raiz, &posi, &flag);
+
+                if (flag == 1)
+                    printf("\n\tValor encontrado!!\n");
+                else
+                    printf("\n\tValor não encontrado!\n");
             break;
 
             case 3:
