@@ -23,10 +23,9 @@ No *criarNo(int item, No *filho);
 void InserirValor(int item, int pos, No *no,No *filho);
 void divideNo(int item, int *pval, int pos, No *no, No *filho, No **novoNo);
 void procura(No *noSelecionado);
-void procuraIten(int item, No *no, int *posi, int *flag);
+int procuraItem(No *noSelecionado, int val);
 
 //remoção
-void procuraIten(int item, No *no, int *posi, int *flag);
 bool RemoveArvBRec(NoArvB **no, int chave, bool *underflow);
 bool BuscaChaveNoArvB(NoArvB *no, int chave, int *pos);
 bool RemoveArvBRec(NoArvB **no, int chave, bool *underflow);
@@ -35,6 +34,11 @@ void TrataNoComMenosChavesQuePermitido(NoArvB **no, int pos);
 void RemoveChaveEmNo(NoArvB *no, int pos);
 bool NoComMaisChavesQuePossivel(NoArvB *no);
 bool NoComMenosChavesQuePermitido(NoArvB *no);
+
+//mostrar por nivel
+int descobreAltura(NoArvB *no);
+void MostraPorNivel(NoArvB *no, int altura);
+void BuscaNivel(NoArvB *no, int altura, int i);
 
 //Se a arvore estiver vazia, alocar o Nó raiz e inserir a chave
 void inserir(int item) {
@@ -143,21 +147,25 @@ void procura( No *noSelecionado) {
     }
 }
 
-void procuraIten(int item, No *no, int *posi, int *flag) {
-    if(!no)
-        return;
+int procuraItem(No *noSelecionado, int val)
+{
+  int i;
+  if (noSelecionado)
+  {
+    for (i = 0; i < noSelecionado->count; i++)
+    {
+      if (procuraItem(noSelecionado->link[i], val))
+        return 1;
 
-    if (item < no->item[1])
-        *posi=0;
-    else {
-        for(*posi = no->count; item<no->item[*posi] && *posi>1; *posi--);
-        if (item == no->item[*posi]) {
-            *flag = 1;
-            return;
-        }
+      if (noSelecionado->item[i + 1] == val)
+        return 1;
     }
-    procuraIten(item, no->link[*posi], posi, flag);
-    return;
+
+    if (procuraItem(noSelecionado->link[i], val))
+      return 1;
+  }
+
+  return 0;
 }
 
 //remoção
@@ -336,14 +344,47 @@ bool NoComMenosChavesQuePermitido(NoArvB *no)
   return(no->count < MAX/2);
 }
 
+int descobreAltura(NoArvB *no) {
+int altura=-1;
 
+    while (no->link[0]!=NULL && altura == -1)
+        altura = descobreAltura(no->link[0]);
+
+return altura+1;
+}
+
+void MostraPorNivel(NoArvB *no, int altura) {
+    for (int i=0; i<=altura; i++) {
+        printf("\n\tNivel %d\n", i);
+        BuscaNivel(no, altura, i);
+        printf("\n");
+    }
+}
+
+void BuscaNivel(NoArvB *no, int altura, int i) {
+    if(!no)
+        return;
+
+    if (i==0) {
+        printf("|");
+        for (int j=0; j<no->count; j++)
+            printf("%d|", no->item[j+1]);
+        printf("\t");
+    }
+
+    else if (i>0) {
+        for (int j=0; j<no->count; j++)
+            BuscaNivel(no->link[j], altura, i-1);
+    }
+
+}
 
 int main() {
-    int item, posi, cmd = 0, flag = 0;
+    int item, posi, cmd = 0, flag = 0, altura;
 
     do {
         printf("\n\tDigite o que deseja fazer:\n");
-        printf("[1] - Inserir\n[2] - Localizar\n[3] - Remover item\n[0] - Sair\nComando: ");
+        printf("[1] - Inserir\n[2] - Localizar\n[3] - Remover item\n[4] - Mostra por nivel\n[0] - Sair\nComando: ");
         scanf(" %d", &cmd);
 
         switch (cmd) {
@@ -358,13 +399,10 @@ int main() {
                 printf("Digite o valor: ");
                 scanf(" %d", &item);
 
-//                flag=0;
-//                procuraIten(item, raiz, 0, &flag);
-
                 printf("\n\tRaiz completa:\n");
                 procura(raiz);
 
-                if (BuscaChaveNoArvB(raiz, item, &posi))
+                if (procuraItem(raiz, item))
                     printf("\n\tValor encontrado!!\n");
                 else
                     printf("\n\tValor não encontrado!\n");
@@ -375,6 +413,13 @@ int main() {
                 scanf(" %d", &item);
 
                 RemoveArvB(&raiz, item);
+            break;
+
+            case 4:
+                altura = descobreAltura(raiz);
+                printf("\n\taltura: %d", altura);
+
+                MostraPorNivel(raiz, altura);
             break;
 
             case 0:
