@@ -7,10 +7,23 @@ int main() {
 int op=0;
 FILE *arqDados, *arqIndice;
 
+arvore *B;
+if (criaArvB(B) == 0)
+    return 0;
+
+    arqDados = fopen("turma.dat", "r+");
+    if (!arqDados)
+        arqDados = fopen("turma.dat", "w+");
+
+    arqIndice = fopen("ibtree.idx", "r+");
+    if (!arqIndice)
+        arqIndice = fopen("ibtree.idx", "w+");
+
 do {
     Menu();
     printf("Comando: ");
     scanf(" %d", &op);
+
 
     switch(op) {
         case 1:

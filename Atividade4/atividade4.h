@@ -1,3 +1,5 @@
+#include <stdio.h>
+#include <stdlib.h>
 #define ordem 5
 
 //Definindo o registro
@@ -12,8 +14,8 @@ typedef struct aluno aluno;
 struct arvore {
     int eFolha; //verifica se é folha (não da pra usar "é" nem "?" pra variavel)
     int nChaves; //conta quantas chaves tem
-    int chaves[ordem-1]; //vetor com as chaves
-    aluno *filhos[ordem]; //vetor com os filhos das chaves
+    aluno chaves[ordem-1]; //vetor com as chaves
+    struct arvore *filhos[ordem]; //vetor com os filhos das chaves
 };
 typedef struct arvore tree, arvore;
 
@@ -27,7 +29,7 @@ int BuscaRA(int *desloc);
 //aluno buscarAluno 
 
 //funções da arvore B a se criar
-//arvore criaArvB();
+int criaArvB(arvore *B);
 //void inserirArvB();
 //int buscarArvB();
 //void printArvB

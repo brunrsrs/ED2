@@ -3,16 +3,25 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define bool int
-#define TRUE 1
-#define FALSE 0
-
 //Funções
 void Menu() {
     printf("\t\nO que deseja fazer?\n");
     printf("[1] - Gravar aluno\n");
     printf("[2] - Buscar aluno\n");
     printf("[3] - Fechar\n");
+}
+
+    //aloca memoria e inicializa a arvore B
+int criaArvB(arvore *B) {
+    B = malloc(sizeof(arvore));
+    if (!B) {
+        printf("Não foi possivel inicializar");
+        return 0;
+    }
+    B->eFolha = 1;
+    B->nChaves = 0;
+
+    return 1;
 }
 
 int gravarAluno() {
@@ -26,7 +35,7 @@ int gravarAluno() {
 
 
 //Função que recebe? nao sei nao lembro oq eu fiz pq n comentei nada
-bool Recebe(struct aluno *a) {
+int Recebe(struct aluno *a) {
     char nome[50];
     printf("Digite o RA do aluno: ");
     scanf(" %[^\n]c", nome);
@@ -51,11 +60,11 @@ bool Recebe(struct aluno *a) {
         printf("\tValor Inválido de RA\n\n");
     } while (a->RA_UNESP < 99999999 || a->RA_UNESP>999999999);
 
-return TRUE;
+return 1;
 }
 
 //Função que busca?
-bool buscaRA(int *desloc) {
+int buscaRA(int *desloc) {
 FILE *arqIndice;
 int RA, num;
     do {
@@ -67,14 +76,14 @@ int RA, num;
 
     arqIndice = fopen("index.txt", "r");
     if (!arqIndice) 
-        return FALSE;
+        return 0;
 
     while (!feof(arqIndice) && num != RA) {
         fscanf(arqIndice, "%d %d\n", &num, desloc);
     }
 
     if (num != RA)
-        return FALSE;
+        return 0;
 
-return TRUE;
+return 1;
 }
