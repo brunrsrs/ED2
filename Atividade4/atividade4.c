@@ -24,10 +24,36 @@ int criaArvB(arvore *B) {
     return 1;
 }
 
-int gravarAluno() {
+    //busca na arvore B o RA passado
+int buscaNaArv(arvore *B, int RA, int *i) {
+  
+    if (!B)
+        return 0;
+
+    if (RA < B->chaves[1])
+        *i = 0;
+
+    else {
+        for (*i = B->nChaves; (RA < B->chaves[*i] && *i > 1); (*i)--); //começa a procurar pelo final
     
+    if (RA == B->chaves[*i]) {
+        int RRN = buscarArqDados(RA);
+        mostrarDados(RRN);
+        return 1;
+    }
+  }
+  buscaNaArv(B->filhos[*i], RA, i);
+
+  return 0;
 }
 
+int buscarArqDados(int RA) {
+
+}
+
+void mostrarDados(int RRN) {
+
+}
 
 
 
