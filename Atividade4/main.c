@@ -5,8 +5,10 @@
 
 int main() {
 int op=0;
+int RA;
 FILE *arqDados, *arqIndice;
 
+aluno *A = malloc(sizeof(aluno));
 arvore *B;
 if (criaArvB(B) == 0)
     return 0;
@@ -27,6 +29,7 @@ do {
 
     switch(op) {
         case 1:
+            recebe(A);
         break;
 
         case 2:

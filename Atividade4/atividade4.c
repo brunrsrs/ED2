@@ -55,21 +55,16 @@ void mostrarDados(int RRN) {
 
 }
 
-
-
-
-
-
-//Função que recebe? nao sei nao lembro oq eu fiz pq n comentei nada
+    //Função que recebe dados do aluno
 int Recebe(struct aluno *a) {
-    char nome[50];
-    printf("Digite o RA do aluno: ");
+    char nome[70];
+    printf("Digite o nome do aluno: ");
     scanf(" %[^\n]c", nome);
 
     a->nome = (char*)malloc(sizeof(strlen(nome)+1));
     strcpy(a->nome, nome);
 
-    char curso[50];
+    char curso[70];
     printf("Digite o curso do aluno: ");
     scanf(" %[^\n]c", curso);
 
