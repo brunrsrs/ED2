@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #define ordem 5
+#define minimo 2
 
 //Definindo o registro
 struct aluno {
@@ -11,28 +12,20 @@ struct aluno {
 typedef struct aluno aluno;
 
 struct arvore {
-    int eFolha; //verifica se é folha (não da pra usar "é" nem "?" pra variavel)
-    int nChaves; //conta quantas chaves tem
+    int nChaves;
     int chaves[ordem-1]; //vetor com as chaves
     struct arvore *filhos[ordem]; //vetor com os filhos das chaves
 };
-typedef struct arvore tree, arvore;
+typedef struct arvore arvore;
 
-//Funções do programa passado
+//Funções de sistema
 void Menu();
 int Recebe(struct aluno *A);
-int BuscaRA(int *desloc);
 
-//funções a se criar:
-void mostrarDados(int RRN);
-int buscarArqDados(int RA); //função pra procurar no ibtree.idx o RNN de tal chave
-//int gravarAluno();
-//aluno buscarAluno 
-
-//funções da arvore B a se criar
-int criaArvB(arvore *B);
-int buscaNaArv(arvore *B, int RA, int *i);
-int buscaNaChave(int tam, arvore B, int chave);
-//void inserirArvB();
-//int buscarArvB();
-//void printArvB
+//Funções da arvore
+arvore *criaNo(int RA, arvore *filho);
+void insereNo(int RA, int pos, arvore *no, arvore *filho);
+void divideNo(int RA, int *pchaves, int pos, arvore *no, arvore *child, arvore **novo);
+int atribuiValor(int RA, int *pchaves, arvore *no, arvore **filho);
+void insere(int RA);
+void busca(int RA, int *pos, arvore *noBusca);

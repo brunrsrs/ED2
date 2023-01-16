@@ -3,56 +3,14 @@
 #include <stdlib.h>
 #include <string.h>
 
-//Funções
+arvore *raiz;
+
+    //Funções
 void Menu() {
     printf("\t\nO que deseja fazer?\n");
     printf("[1] - Gravar aluno\n");
     printf("[2] - Buscar aluno\n");
     printf("[3] - Fechar\n");
-}
-
-    //aloca memoria e inicializa a arvore B
-int criaArvB(arvore *B) {
-    B = malloc(sizeof(arvore));
-    if (!B) {
-        printf("Não foi possivel inicializar");
-        return 0;
-    }
-    B->eFolha = 1;
-    B->nChaves = 0;
-
-    return 1;
-}
-
-    //busca na arvore B o RA passado
-int buscaNaArv(arvore *B, int RA, int *i) {
-  
-    if (!B)
-        return 0;
-
-    if (RA < B->chaves[1])
-        *i = 0;
-
-    else {
-        for (*i = B->nChaves; (RA < B->chaves[*i] && *i > 1); (*i)--); //começa a procurar pelo final
-    
-    if (RA == B->chaves[*i]) {
-        int RRN = buscarArqDados(RA);
-        mostrarDados(RRN);
-        return 1;
-    }
-  }
-  buscaNaArv(B->filhos[*i], RA, i);
-
-  return 0;
-}
-
-int buscarArqDados(int RA) {
-
-}
-
-void mostrarDados(int RRN) {
-
 }
 
     //Função que recebe dados do aluno
@@ -71,7 +29,6 @@ int Recebe(struct aluno *a) {
     a->curso = (char*)malloc(sizeof(strlen(curso)+1));
     strcpy(a->curso, curso);
 
-    //Fazer verificação se não há igual
     do {
     printf("Digite o RA do aluno: ");
     scanf(" %d", &a->RA_UNESP);
@@ -84,27 +41,125 @@ int Recebe(struct aluno *a) {
 return 1;
 }
 
-//Função que busca?
-int buscaRA(int *desloc) {
-FILE *arqIndice;
-int RA, num;
-    do {
-    printf("\nDigite o RA de que deseja encontrar: ");
-    scanf(" %d", &RA);
-    if (RA < 99999999 || RA>999999999)
-        printf("\tRA Inválido\n");
-    } while(RA < 99999999 || RA>999999999);
+    //funções da arvore
+arvore *criaNo(int RA, arvore *filho) {
+    struct arvore *novo;
+    novo = (arvore *)malloc(sizeof(arvore));
+    novo->chaves[1] = RA;
+    novo->nChaves = 1;
+    novo->filhos[0] = raiz;
+    novo->filhos[1] = filho;
+    return novo;
+}
 
-    arqIndice = fopen("index.txt", "r");
-    if (!arqIndice) 
-        return 0;
+void insereNo(int RA, int pos, arvore *no, arvore *filho) {
+    int j = no->nChaves;
+    while (j > pos) {
+        no->chaves[j + 1] = no->chaves[j];
+        no->filhos[j + 1] = no->filhos[j];
+        j--;
+    }
+    no->chaves[j + 1] = RA;
+    no->filhos[j + 1] = filho;
+    no->nChaves++;
+}
 
-    while (!feof(arqIndice) && num != RA) {
-        fscanf(arqIndice, "%d %d\n", &num, desloc);
+void divideNo(int RA, int *pchaves, int pos, arvore *no, arvore *child, arvore **novo) {
+    int meio, j;
+
+    if (pos > minimo)
+        meio = minimo + 1;
+    else
+        meio = minimo;
+
+    *novo = (arvore *)malloc(sizeof(arvore));
+    j = meio + 1;
+    while (j <= ordem) {
+        (*novo)->chaves[j - meio] = no->chaves[j];
+        (*novo)->filhos[j - meio] = no->filhos[j];
+        j++;
+    }
+    no->nChaves = meio;
+    (*novo)->nChaves = ordem - meio;
+
+    if (pos <= minimo)
+        insereNo(RA, pos, no, child);
+    else
+        insereNo(RA, pos - meio, *novo, child);
+
+    *pchaves = no->chaves[no->nChaves];
+    (*novo)->filhos[0] = no->filhos[no->nChaves];
+    no->nChaves--;
+}
+
+int atribuiValor(int RA, int *pchaves, arvore *no, arvore **filho) {
+    int pos;
+    if (!no) {
+        *pchaves = RA;
+        *filho = NULL;
+        return 1;
     }
 
-    if (num != RA)
-        return 0;
+    if (RA < no->chaves[1])
+        pos = 0;
 
-return 1;
+    else {
+        for (pos = no->nChaves;
+        (RA < no->chaves[pos] && pos > 1); pos--);
+        if (RA == no->chaves[pos]) {
+            printf("Esse RA já foi inserido\n");
+            return 0;
+        }
+    }
+    
+    if (atribuiValor(RA, pchaves, no->filhos[pos], filho)) {
+        if (no->nChaves < ordem)
+            insereNo(*pchaves, pos, no, *filho);
+
+        else {
+            divideNo(*pchaves, pchaves, pos, no, *filho, filho);
+            return 1;
+        }
+    }
+    return 0;
+}
+
+void insere(int RA) {
+    int flag, i;
+    arvore *filho;
+
+    flag = atribuiValor(RA, &i, raiz, &filho);
+    if (flag)
+        raiz = criaNo(i, filho);
+}
+
+void busca(int RA, int *pos, arvore *noBusca) {
+    if (!noBusca)
+        return;
+
+    if (RA < noBusca->chaves[1])
+        *pos = 0;
+    
+    else {
+        for (*pos = noBusca->nChaves;
+        (RA < noBusca->chaves[*pos] && *pos > 1); (*pos)--);
+        if (RA == noBusca->chaves[*pos]) {
+        printf("%d foi encontrado", RA);
+        return;
+        }
+    }
+    busca(RA, pos, noBusca->filhos[*pos]);
+
+    return;
+}
+
+void MostraPorNivel(arvore *no, int altura) {
+    if (!no)
+        return;
+
+    for (int i=0; i<=altura; i++) {
+        printf("\n\tNivel %d\n", i);
+        BuscaNivel(no, altura, i);
+        printf("\n");
+    }
 }

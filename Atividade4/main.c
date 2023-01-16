@@ -9,9 +9,9 @@ int RA;
 FILE *arqDados, *arqIndice;
 
 aluno *A = malloc(sizeof(aluno));
-arvore *B;
-if (criaArvB(B) == 0)
-    return 0;
+arvore *B = malloc(sizeof(arvore));
+B->nChaves=0;
+//raiz->nChaves=0;
 
     arqDados = fopen("turma.dat", "r+");
     if (!arqDados)
@@ -21,18 +21,32 @@ if (criaArvB(B) == 0)
     if (!arqIndice)
         arqIndice = fopen("ibtree.idx", "w+");
 
+
+    //valores genericos de RA pra testar se ta inserindo função
+  insere(8);
+  insere(9);
+  insere(10);
+  insere(11);
+  insere(15);
+  insere(16);
+  insere(17);
+  insere(18);
+  insere(20);
+  insere(23);
+
 do {
     Menu();
     printf("Comando: ");
     scanf(" %d", &op);
 
-
     switch(op) {
         case 1:
-            recebe(A);
+            Recebe(A);
+            insere(A->RA_UNESP);
         break;
 
         case 2:
+            mostraTodos(raiz);
         break;
 
         case 3:
