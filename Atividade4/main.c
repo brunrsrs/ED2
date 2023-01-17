@@ -7,12 +7,13 @@
 
 FILE *arqDados, *arqIndice;
 
-//Definindo o registro
+////////////////////////////////////////////
+//Definindo os registros
 typedef struct aluno {
   char *nome;
   char *curso;
   int RA_UNESP;
-  int RNN;
+  int RRN;
 }aluno;
 
 typedef struct arvore {
@@ -21,8 +22,28 @@ typedef struct arvore {
   struct arvore *filhos[ordem + 1];
 }arvore;
 
-  arvore *raiz;
+arvore *raiz = NULL;
 
+////////////////////////////////////////////
+//declarações
+//funções de sistema
+void Menu();
+void Recebe(struct aluno *a);
+void atualizaIndice(arvore *B);
+void montaArvore(aluno no);
+void armazenaArquivo(aluno *A);
+
+//funções da arvore
+arvore *criaNo(aluno chave, arvore *filho);
+void insereNo(aluno chaves, int pos, arvore *no,  arvore *filho);
+void divideNo(aluno chaves, aluno *pchaves, int pos,  arvore *no,  arvore *filho,  arvore **novo);
+int atribuiValor(aluno chaves, aluno *pchaves,  arvore *no,  arvore **filho);
+void insere(aluno chave);
+void busca(int chaves, int *pos,  arvore *noBusca);
+void mostraTodos(arvore *no);
+
+////////////////////////////////////////////
+//funções
 void Menu() {
     printf("\t\nO que deseja fazer?\n");
     printf("[1] - Gravar aluno\n");
@@ -56,6 +77,25 @@ void Recebe(struct aluno *a) {
     } while (a->RA_UNESP < 99999999 || a->RA_UNESP>999999999);
 }
 
+void atualizaIndice(arvore *B) {
+  int i;
+  if (B) {
+    for (i = 0; i < B->nChaves; i++) {
+      atualizaIndice(B->filhos[i]);
+      fprintf(arqIndice, "%d ", B->chaves[i + 1].RA_UNESP);
+      fprintf(arqIndice, "%d\n", B->chaves[i + 1].RRN);
+    }
+    atualizaIndice(B->filhos[i]);
+  }
+}
+
+void montaArvore(aluno no) {
+  while (!feof(arqIndice)) {
+    fscanf(arqIndice, "%d %d\n", &no.RA_UNESP, &no.RRN);
+    insere(no);
+  }
+}
+
 void armazenaArquivo(aluno *A) {
   int inicio, fim;
   fseek(arqDados, 0, SEEK_END);
@@ -64,40 +104,35 @@ void armazenaArquivo(aluno *A) {
   fim = ftell(arqDados);
   for (int i=0; i<128-(fim-inicio); i++)
     fprintf(arqDados, "#");
-  A->RNN = inicio; //salva o RNN para o arquivo de indice
+  A->RRN = inicio; //salva o RRN para o arquivo de indice
 }
 
-void atualizaIndice() {
-//  fprintf(arqIndice, "raiz: %d", )
 
-}
-
-// Create a no
-arvore *criaNo(int chave, arvore *filho) {
+arvore *criaNo(aluno chave, arvore *filho) {
     arvore *novo;
     novo = (arvore *)malloc(sizeof(arvore));
-    novo->chaves[1].RA_UNESP = chave;
+    novo->chaves[1].RA_UNESP = chave.RA_UNESP;
+    novo->chaves[1].RRN = chave.RRN;
     novo->nChaves = 1;
     novo->filhos[0] = raiz;
     novo->filhos[1] = filho;
     return novo;
 }
 
-// insere no
-void insereNo(int chaves, int pos, arvore *no,  arvore *filho) {
+void insereNo(aluno chaves, int pos, arvore *no,  arvore *filho) {
     int j = no->nChaves;
     while (j > pos) {
       no->chaves[j + 1] = no->chaves[j];
       no->filhos[j + 1] = no->filhos[j];
       j--;
     }
-    no->chaves[j + 1].RA_UNESP = chaves;
+    no->chaves[j + 1].RA_UNESP = chaves.RA_UNESP;
+    no->chaves[j + 1].RRN = chaves.RRN;
     no->filhos[j + 1] = filho;
     no->nChaves++;
 }
 
-// Split no
-void divideNo(int chaves, int *pchaves, int pos,  arvore *no,  arvore *filho,  arvore **novo) {
+void divideNo(aluno chaves, aluno *pchaves, int pos,  arvore *no,  arvore *filho,  arvore **novo) {
     int meio, j;
 
     if (pos > minimo)
@@ -105,7 +140,7 @@ void divideNo(int chaves, int *pchaves, int pos,  arvore *no,  arvore *filho,  a
     else
       meio = minimo;
 
-    *novo = ( arvore *)malloc(sizeof( arvore));
+    *novo = (arvore *)malloc(sizeof(arvore));
     j = meio + 1;
     while (j <= ordem) {
       (*novo)->chaves[j - meio] = no->chaves[j];
@@ -115,18 +150,19 @@ void divideNo(int chaves, int *pchaves, int pos,  arvore *no,  arvore *filho,  a
     no->nChaves = meio;
     (*novo)->nChaves = ordem - meio;
 
-    if (pos <= minimo) {
+    if (pos <= minimo)
       insereNo(chaves, pos, no, filho);
-    } else {
+
+    else
       insereNo(chaves, pos - meio, *novo, filho);
-    }
-    *pchaves = no->chaves[no->nChaves].RA_UNESP;
+
+    pchaves->RA_UNESP = no->chaves[no->nChaves].RA_UNESP;
+    pchaves->RRN = no->chaves[no->nChaves].RRN;
     (*novo)->filhos[0] = no->filhos[no->nChaves];
     no->nChaves--;
 }
 
-// Set the chavesue
-int atribuiValor(int chaves, int *pchaves,  arvore *no,  arvore **filho) {
+int atribuiValor(aluno chaves, aluno *pchaves,  arvore *no,  arvore **filho) {
     int pos;
     if (!no) {
         *pchaves = chaves;
@@ -134,15 +170,14 @@ int atribuiValor(int chaves, int *pchaves,  arvore *no,  arvore **filho) {
         return 1;
     }
 
-    if (chaves < no->chaves[1].RA_UNESP)
+    if (chaves.RA_UNESP < no->chaves[1].RA_UNESP)
         pos = 0;
 
     else {
         for (pos = no->nChaves;
-        (chaves < no->chaves[pos].RA_UNESP && pos > 1); pos--);
-        if (chaves == no->chaves[pos].RA_UNESP) {
-        printf("Esse RA já foi inserido\n");
-        return 0;
+        (chaves.RA_UNESP < no->chaves[pos].RA_UNESP && pos > 1); pos--);
+        if (chaves.RA_UNESP == no->chaves[pos].RA_UNESP) {
+        printf("\n\tAviso: esse RA já foi inserido\nInserindo mesmo assim");
         }
     }
 
@@ -158,17 +193,16 @@ int atribuiValor(int chaves, int *pchaves,  arvore *no,  arvore **filho) {
     return 0;
 }
 
-// insere the chavesue
-void insere(int chaves) {
-  int flag, i;
+void insere(aluno chave) {
+  int flag;
+  aluno i;
     arvore *filho;
 
-  flag = atribuiValor(chaves, &i, raiz, &filho);
+  flag = atribuiValor(chave, &i, raiz, &filho);
   if (flag)
     raiz = criaNo(i, filho);
 }
 
-// Search no
 void busca(int chaves, int *pos,  arvore *noBusca) {
     if (!noBusca)
         return;
@@ -195,16 +229,61 @@ void mostraTodos(arvore *no) {
     for (i = 0; i < no->nChaves; i++) {
       mostraTodos(no->filhos[i]);
       printf("%d ", no->chaves[i + 1].RA_UNESP);
+      printf("%d\n", no->chaves[i + 1].RRN);
     }
     mostraTodos(no->filhos[i]);
   }
 }
 
+int procuraItem(arvore *no, int val)
+{
+  int i;
+  aluno a;
+  if (no)
+  {
+    for (i = 0; i < no->nChaves; i++)
+    {
+      if (procuraItem(no->filhos[i], val))
+        return 1;
+
+      if (no->chaves[i + 1].RA_UNESP == val) {
+        char c[1];
+        fseek(arqDados, no->chaves[i+1].RRN + 1, SEEK_SET);
+        fscanf(arqDados, "%d|", &a.RA_UNESP);
+
+        a.nome = (char*)malloc(sizeof(70));
+        c[0] = fgetc(arqDados);
+        do {
+          strcat(a.nome, c);
+          c[0] = fgetc(arqDados);
+        } while (c[0] != '|');
+        fseek(arqIndice, 1, SEEK_CUR);
+
+        a.curso = (char*)malloc(sizeof(70));
+        c[0] = fgetc(arqDados);
+        do {
+          strcat(a.curso, c);
+          c[0] = fgetc(arqDados);
+        } while (c[0] != '|');
+
+        printf("\n\tEncontrado!!\n");
+        printf("%s - %s - %d\n", a.nome, a.curso, a.RA_UNESP);
+
+        return 1;
+      }
+    }
+
+    if (procuraItem(no->filhos[i], val))
+      return 1;
+  }
+
+  return 0;
+}
 
 ////////////////////////////////////////////
 //função main
 int main() {
-  int chaves, ch;
+  int chave, ch;
   int op=0;
   aluno A;
 
@@ -215,6 +294,11 @@ int main() {
   arqIndice = fopen("ibtree.idx", "r+");
   if (!arqIndice)
     arqIndice = fopen("ibtree.idx", "w+");
+    
+  else
+    montaArvore(A);
+
+  fseek(arqIndice, 0, SEEK_SET);
 
 do {
     Menu();
@@ -225,16 +309,14 @@ do {
       case 1:
         Recebe(&A);
         armazenaArquivo(&A);
-        insere(A.RA_UNESP);        
-
-        fclose(arqIndice);
-        arqIndice = fopen("ibtree.idx", "w");
-
-        atualizaIndice(A);
+        insere(A);        
       break;
 
       case 2:
-        mostraTodos(raiz);
+        printf("Digite o RA que deseja buscar: ");
+        scanf(" %d", &chave);
+        if (!procuraItem(raiz, chave))
+          printf("\n\tValor não encontrado");
       break;
 
       case 3:
@@ -245,6 +327,9 @@ do {
       break;
     }
 } while(op!=3);
+
+fseek(arqIndice, 0, SEEK_SET);
+atualizaIndice(raiz);
 
 fclose(arqDados);
 fclose(arqIndice);
